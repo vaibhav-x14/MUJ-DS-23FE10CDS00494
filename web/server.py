@@ -46,6 +46,7 @@ class QueryRequest(BaseModel):
 
 @app.get("/api/health")
 def health_check():
+    db_stats = engine.db.get_stats()
     return {
         "status": "healthy",
         "provider": settings.llm.provider,
@@ -53,7 +54,13 @@ def health_check():
         "is_indexed": engine._is_indexed,
         "chunks_indexed": len(engine.chunks),
         "api_key_configured": bool(os.getenv("GEMINI_API_KEY") or settings.llm.api_key),
+        "database": db_stats,
     }
+
+
+@app.get("/api/database")
+def get_database_stats():
+    return engine.db.get_stats()
 
 
 @app.post("/api/query", response_model=OmniRAGResult)

@@ -1,11 +1,12 @@
 import pytest
 from omnirag.pipeline import OmniRAGEngine
 from omnirag.core.schemas import OmniRAGResult
+from omnirag.llm.mock_client import MockLLMClient
 
 
 @pytest.fixture(scope="module")
 def engine():
-    e = OmniRAGEngine()
+    e = OmniRAGEngine(llm_client=MockLLMClient())
     e.index()
     return e
 

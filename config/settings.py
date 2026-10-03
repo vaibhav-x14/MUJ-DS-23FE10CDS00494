@@ -25,6 +25,14 @@ class SystemConfig(BaseModel):
     seed: int = 42
 
 
+class DatabaseConfig(BaseModel):
+    enabled: bool = True
+    type: str = "sqlite"
+    sqlite_path: str = "data/omnirag.db"
+    auto_persist: bool = True
+    incremental_indexing: bool = True
+
+
 class LLMConfig(BaseModel):
     provider: str = "gemini"
     model_name: str = "gemini-3.8-flash"
@@ -118,6 +126,7 @@ class WebConfig(BaseModel):
 
 class AppConfig(BaseModel):
     system: SystemConfig = SystemConfig()
+    database: DatabaseConfig = DatabaseConfig()
     llm: LLMConfig = LLMConfig()
     retrieval: RetrievalConfig = RetrievalConfig()
     knowledge_graph: KnowledgeGraphConfig = KnowledgeGraphConfig()

@@ -23,14 +23,18 @@ from omnirag.agent import (
     GroundedSynthesizerAgent,
     HallucinationAuditorAgent,
 )
+from omnirag.storage import OmniRAGDatabase
 from config.settings import settings, DOCS_DIR
 
 
 class OmniRAGEngine:
-    """Master Multi-Hop Agentic RAG Engine with Self-Reflection and Graph Augmentation."""
+    """Master Multi-Hop Agentic RAG Engine with Self-Reflection, Graph Augmentation,
+    and Persistent Database Storage (SQLite).
+    """
 
-    def __init__(self, llm_client: Optional[BaseLLMClient] = None):
+    def __init__(self, llm_client: Optional[BaseLLMClient] = None, db: Optional[OmniRAGDatabase] = None):
         self.llm_client = llm_client or get_llm_client()
+        self.db = db or OmniRAGDatabase()
         self.chunker = SemanticRecursiveChunker()
         self.sparse_retriever = BM25Retriever()
         self.dense_retriever = DenseVectorRetriever(self.llm_client)
@@ -46,29 +50,78 @@ class OmniRAGEngine:
         self.chunks: List[Chunk] = []
         self._is_indexed = False
 
-    def index(self, docs_dir: Optional[Path] = None) -> int:
-        """Loads corpus, creates chunks, and indexes sparse, dense, and graph representations."""
+    def index(self, docs_dir: Optional[Path] = None, force_reindex: bool = False) -> int:
+        """Incrementally indexes documents into persistent SQLite database.
+        Eliminates document limits and caches embeddings/knowledge graphs across restarts.
+        """
         target_dir = docs_dir or DOCS_DIR
-        logger.info(f"Indexing documents from directory: {target_dir}")
-        self.chunks = self.chunker.chunk_directory(target_dir)
+        logger.info(f"Synchronizing corpus with database from: {target_dir}")
+
+        new_or_modified_docs = 0
+
+        # Scan directory for new or updated files
+        if target_dir.exists():
+            for file_path in target_dir.glob("*.*"):
+                if file_path.suffix.lower() in [".txt", ".md", ".json"]:
+                    try:
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            content = f.read()
+
+                        doc_id = file_path.stem
+                        content_hash = self.db.compute_hash(content)
+
+                        if not force_reindex and self.db.is_document_current(doc_id, content_hash):
+                            continue  # Up-to-date in database
+
+                        new_or_modified_docs += 1
+                        logger.info(f"Indexing new/updated document into database: {file_path.name}")
+                        doc_chunks = self.chunker.split_text(content, doc_id=doc_id, metadata={"source_path": str(file_path)})
+
+                        # Generate dense embeddings for chunks
+                        chunk_texts = [c.text for c in doc_chunks]
+                        embeddings = self.llm_client.get_embeddings(chunk_texts)
+
+                        # Save document and chunks + vectors to SQLite
+                        self.db.save_document_and_chunks(
+                            doc_id=doc_id,
+                            filename=file_path.name,
+                            content_hash=content_hash,
+                            chunks=doc_chunks,
+                            embeddings=embeddings,
+                        )
+
+                        # Extract Knowledge Graph and persist
+                        self.graph_retriever.extract_from_chunks(doc_chunks, db_handler=self.db)
+
+                    except Exception as e:
+                        logger.warning(f"Failed to process {file_path}: {e}")
+
+        # Load all chunks and pre-computed embeddings from database
+        self.chunks, cached_embeddings = self.db.load_all_chunks()
 
         if not self.chunks:
-            logger.warning(f"No document chunks found in {target_dir}")
+            logger.warning(f"No document chunks found in database or directory {target_dir}")
             return 0
 
-        logger.info(f"Chunked corpus into {len(self.chunks)} semantic passages.")
-
-        # 1. Index BM25
+        # Load BM25 index
         self.sparse_retriever.index(self.chunks)
 
-        # 2. Index Dense vectors
-        self.dense_retriever.index(self.chunks)
+        # Load Dense index with cached vector embeddings (0ms latency!)
+        if cached_embeddings is not None and len(cached_embeddings) == len(self.chunks):
+            self.dense_retriever.load_cached_embeddings(self.chunks, cached_embeddings)
+        else:
+            self.dense_retriever.index(self.chunks)
 
-        # 3. Extract and index Knowledge Graph
-        self.graph_retriever.extract_from_chunks(self.chunks)
+        # Load full Knowledge Graph from database
+        kg_entities, kg_relations = self.db.load_knowledge_graph()
+        self.graph_retriever.load_from_db(kg_entities, kg_relations)
 
         self._is_indexed = True
-        logger.info("OmniRAG Indexing complete (BM25 + Dense + KnowledgeGraph ready).")
+        stats = self.db.get_stats()
+        logger.info(
+            f"OmniRAG Database Ready: {stats['total_documents']} documents, {stats['total_chunks']} chunks, "
+            f"{stats['total_graph_entities']} entities, {stats['total_graph_relations']} graph edges indexed."
+        )
         return len(self.chunks)
 
     def query(self, user_query: str, verbose: bool = True) -> OmniRAGResult:
@@ -128,13 +181,11 @@ class OmniRAGEngine:
                 if c.chunk_id not in verified_chunks_map:
                     verified_chunks_map[c.chunk_id] = c
                 else:
-                    # Update scores if higher
                     if c.rrf_score > verified_chunks_map[c.chunk_id].rrf_score:
                         verified_chunks_map[c.chunk_id] = c
 
         all_evidence = list(verified_chunks_map.values())
         if not all_evidence:
-            # Fallback to top-1 overall chunk if strict filters removed everything
             all_evidence = self.chunks[:1]
 
         # -------------------------------------------------------------

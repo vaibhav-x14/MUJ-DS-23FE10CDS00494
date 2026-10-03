@@ -9,6 +9,13 @@ system:
   log_level: "INFO"
   seed: 42
 
+database:
+  enabled: true
+  type: "sqlite"                   # "sqlite" | "postgresql"
+  sqlite_path: "data/omnirag.db"
+  auto_persist: true
+  incremental_indexing: true
+
 llm:
   provider: "gemini"               # Primary provider: "gemini" (supports mock fallback)
   model_name: "gemini-3.8-flash"   # Current model

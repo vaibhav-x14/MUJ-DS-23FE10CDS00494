@@ -1,5 +1,5 @@
 import re
-from typing import List, Dict, Any, Set, Tuple
+from typing import List, Dict, Any, Set, Tuple, Optional
 import networkx as nx
 from omnirag.core.schemas import Chunk, EntityNode, RelationEdge, KnowledgeGraphSnapshot
 from omnirag.llm.base import BaseLLMClient
@@ -8,7 +8,7 @@ from omnirag.core.logger import logger
 
 
 class KnowledgeGraphRetriever:
-    """Extracts, indexes, and traverses an entity-relation knowledge graph using NetworkX."""
+    """Extracts, indexes, persists, and traverses an entity-relation knowledge graph using NetworkX & SQLite."""
 
     def __init__(self, llm_client: BaseLLMClient):
         self.llm_client = llm_client
@@ -17,13 +17,44 @@ class KnowledgeGraphRetriever:
         self.relations: List[RelationEdge] = []
         self.chunk_entity_map: Dict[str, Set[str]] = {}
 
-    def extract_from_chunks(self, chunks: List[Chunk], max_chunks_to_sample: int = 6) -> None:
-        """Extracts entities and relational triplets from corpus chunks using LLM."""
-        logger.info(f"Extracting knowledge graph entities from {len(chunks)} chunks...")
+    def load_from_db(self, db_entities: List[EntityNode], db_relations: List[RelationEdge]) -> None:
+        """Loads and rebuilds NetworkX graph from database records."""
+        self.graph.clear()
+        self.entities.clear()
+        self.relations.clear()
+
+        for node in db_entities:
+            self.entities[node.name.lower()] = node
+            self.graph.add_node(node.name, type=node.type, id=node.id)
+
+        for edge in db_relations:
+            self.relations.append(edge)
+            self.graph.add_edge(edge.source, edge.target, predicate=edge.predicate, evidence=edge.evidence_snippet)
+
+        logger.info(f"Loaded Knowledge Graph from database ({len(db_entities)} entities, {len(db_relations)} relationships).")
+
+    def extract_from_chunks(
+        self,
+        chunks: List[Chunk],
+        max_chunks: Optional[int] = None,
+        db_handler: Optional[Any] = None,
+    ) -> None:
+        """Extracts entities and relational triplets from corpus chunks, persisting to database."""
+        # If DB already has graph data, load first
+        if db_handler:
+            saved_entities, saved_relations = db_handler.load_knowledge_graph()
+            if saved_entities:
+                self.load_from_db(saved_entities, saved_relations)
+                return
+
+        target_chunks = chunks[:max_chunks] if max_chunks else chunks
+        logger.info(f"Extracting knowledge graph entities across {len(target_chunks)} chunks...")
         sys_p, _ = prompt_catalog.render("entity_graph_extractor", {"text": ""})
 
-        # Process chunks to build graph
-        for chunk in chunks[:max_chunks_to_sample]:
+        new_entities: List[EntityNode] = []
+        new_relations: List[RelationEdge] = []
+
+        for chunk in target_chunks:
             user_p = prompt_catalog.get_template("entity_graph_extractor").render_user(text=chunk.text)
             try:
                 data, _ = self.llm_client.generate_json(system_prompt=sys_p, user_prompt=user_p)
@@ -55,6 +86,7 @@ class KnowledgeGraphRetriever:
                     self.entities[node.name.lower()] = node
                     self.graph.add_node(node.name, type=node.type, id=node.id)
                     c_entities.add(node.name)
+                    new_entities.append(node)
 
                 for r in raw_relations:
                     if not isinstance(r, dict):
@@ -72,11 +104,17 @@ class KnowledgeGraphRetriever:
                         )
                         self.relations.append(edge)
                         self.graph.add_edge(subj, obj, predicate=pred, evidence=snip)
+                        new_relations.append(edge)
 
                 self.chunk_entity_map[chunk.chunk_id] = c_entities
 
             except Exception as e:
                 logger.warning(f"Entity graph extraction failed for chunk {chunk.chunk_id}: {e}")
+
+        # Persist extracted graph to database if provided
+        if db_handler and (new_entities or new_relations):
+            db_handler.save_knowledge_graph(new_entities, new_relations)
+            logger.info("Persisted newly extracted knowledge graph to SQLite database.")
 
     def query_subgraph(self, query_entities: List[str], max_hops: int = 2) -> KnowledgeGraphSnapshot:
         """Finds sub-graph containing the query entities and their immediate neighborhood."""
@@ -99,7 +137,6 @@ class KnowledgeGraphRetriever:
 
         # 1-hop / 2-hop neighborhood expansion
         for node in target_nodes:
-            # Outgoing edges
             if self.graph.has_node(node):
                 for _, neighbor, data in self.graph.out_edges(node, data=True):
                     matched_nodes.add(neighbor)
@@ -111,7 +148,6 @@ class KnowledgeGraphRetriever:
                             evidence_snippet=data.get("evidence", ""),
                         )
                     )
-                # Incoming edges
                 for neighbor, _, data in self.graph.in_edges(node, data=True):
                     matched_nodes.add(neighbor)
                     matched_edges.append(

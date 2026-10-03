@@ -31,6 +31,13 @@ class DenseVectorRetriever:
         norms[norms == 0.0] = 1e-10
         self.embeddings = emb_arr / norms
 
+    def load_cached_embeddings(self, chunks: List[Chunk], embeddings: np.ndarray) -> None:
+        """Loads pre-computed embeddings loaded from persistent database."""
+        self.corpus = chunks
+        norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+        norms[norms == 0.0] = 1e-10
+        self.embeddings = embeddings / norms
+
     def retrieve(self, query: str, top_k: int = 5) -> List[Tuple[Chunk, float]]:
         """Finds top_k nearest chunks to query vector."""
         if not self.corpus or self.embeddings is None:
@@ -44,6 +51,10 @@ class DenseVectorRetriever:
         q_norm = np.linalg.norm(q_vec)
         if q_norm > 0:
             q_vec = q_vec / q_norm
+
+        # Check for dimensionality alignment (e.g. if switching between Gemini 3072-dim and Mock 768-dim)
+        if self.embeddings.shape[1] != q_vec.shape[0]:
+            self.index(self.corpus)
 
         # Cosine similarity matrix multiplication
         sim_scores = np.dot(self.embeddings, q_vec)
