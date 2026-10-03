@@ -17,12 +17,15 @@ from config.settings import DATA_DIR, settings
 
 
 
+from omnirag.llm.mock_client import MockLLMClient
+
+
 class OmniRAGEvalSuite:
     """Rigorous evaluation harness benchmark suite for multi-hop RAG."""
 
-    def __init__(self, benchmark_file: Optional[Path] = None):
+    def __init__(self, benchmark_file: Optional[Path] = None, use_mock: bool = True):
         self.benchmark_path = benchmark_file or (DATA_DIR / "benchmark_qa.json")
-        self.engine = OmniRAGEngine()
+        self.engine = OmniRAGEngine(llm_client=MockLLMClient() if use_mock else None)
 
     def load_benchmarks(self) -> List[Dict[str, Any]]:
         with open(self.benchmark_path, "r", encoding="utf-8") as f:

@@ -18,10 +18,21 @@ class QueryPlannerAgent:
 
         try:
             data, usage = self.llm_client.generate_json(system_prompt=sys_p, user_prompt=user_p)
-            hops_data = data.get("hops", [])
+            if isinstance(data, list):
+                hops_data = data
+                reasoning = "Multi-hop decomposition executed."
+            elif isinstance(data, dict):
+                hops_data = data.get("hops", [])
+                reasoning = data.get("reasoning", "Multi-hop decomposition executed.")
+            else:
+                hops_data = []
+                reasoning = "Direct fallback execution."
+
             hops: List[SubQueryHop] = []
 
             for h in hops_data:
+                if not isinstance(h, dict):
+                    continue
                 hops.append(
                     SubQueryHop(
                         hop_id=h.get("hop_id", len(hops) + 1),
@@ -36,7 +47,7 @@ class QueryPlannerAgent:
 
             return QueryPlan(
                 original_query=user_query,
-                reasoning=data.get("reasoning", "Multi-hop decomposition executed."),
+                reasoning=reasoning,
                 is_multihop=len(hops) > 1,
                 hops=hops,
             )
