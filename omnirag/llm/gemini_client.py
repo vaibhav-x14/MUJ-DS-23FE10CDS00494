@@ -97,6 +97,11 @@ class GeminiLLMClient(BaseLLMClient):
                 if attempt < max_retries - 1:
                     time.sleep(backoff * (2 ** attempt))
 
+        if settings.llm.fallback_to_mock:
+            logger.info(f"Gemini API rate limit or error reached. Falling back to local engine.")
+            from omnirag.llm.mock_client import MockLLMClient
+            return MockLLMClient().generate(system_prompt, user_prompt, temperature, max_tokens)
+
         raise RuntimeError(f"Gemini API generation failed after {max_retries} attempts: {last_err}")
 
     def generate_json(
@@ -158,11 +163,17 @@ class GeminiLLMClient(BaseLLMClient):
                 if attempt < max_retries - 1:
                     time.sleep(backoff * (2 ** attempt))
 
+        if settings.llm.fallback_to_mock:
+            logger.info(f"Gemini API rate limit or error reached. Falling back to local engine.")
+            from omnirag.llm.mock_client import MockLLMClient
+            return MockLLMClient().generate_json(system_prompt, user_prompt, schema, temperature)
+
         raise RuntimeError(f"Gemini API JSON generation failed after {max_retries} retries: {last_err}")
 
     def get_embeddings(self, texts: List[str]) -> List[List[float]]:
         if not self.is_available() or not texts:
-            return []
+            from omnirag.llm.mock_client import MockLLMClient
+            return MockLLMClient().get_embeddings(texts)
 
         try:
             # Batch embedding call via google-genai
@@ -178,5 +189,6 @@ class GeminiLLMClient(BaseLLMClient):
                 embeddings.append(list(response.embedding.values))
             return embeddings
         except Exception as e:
-            logger.warning(f"Gemini embedding API failed: {e}. Falling back.")
-            raise e
+            logger.warning(f"Gemini embedding API failed: {e}. Falling back to normalized local embeddings.")
+            from omnirag.llm.mock_client import MockLLMClient
+            return MockLLMClient().get_embeddings(texts)

@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Optional
 import yaml
 from pydantic import BaseModel, Field
+from dotenv import load_dotenv
 
 # Base directories
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,6 +11,10 @@ CONFIG_PATH = BASE_DIR / "config" / "config.yaml"
 DATA_DIR = BASE_DIR / "data"
 DOCS_DIR = DATA_DIR / "documents"
 PROMPTS_DIR = BASE_DIR / "prompts"
+
+# Automatically load environment variables from .env if present
+load_dotenv(BASE_DIR / ".env")
+
 
 
 class SystemConfig(BaseModel):
@@ -22,8 +27,8 @@ class SystemConfig(BaseModel):
 
 class LLMConfig(BaseModel):
     provider: str = "gemini"
-    model_name: str = "gemini-2.0-flash"
-    embedding_model: str = "text-embedding-004"
+    model_name: str = "gemini-3.8-flash"
+    embedding_model: str = "gemini-embedding-001"
     temperature: float = 0.2
     top_p: float = 0.95
     max_output_tokens: int = 2048

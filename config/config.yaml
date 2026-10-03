@@ -11,8 +11,8 @@ system:
 
 llm:
   provider: "gemini"               # Primary provider: "gemini" (supports mock fallback)
-  model_name: "gemini-2.0-flash"   # Options: gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash
-  embedding_model: "text-embedding-004"
+  model_name: "gemini-3.8-flash"   # Current model
+  embedding_model: "gemini-embedding-001"
   temperature: 0.2
   top_p: 0.95
   max_output_tokens: 2048

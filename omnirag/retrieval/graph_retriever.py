@@ -33,20 +33,32 @@ class KnowledgeGraphRetriever:
                 c_entities = set()
 
                 for e in raw_entities:
-                    name = e.get("name")
+                    if isinstance(e, str):
+                        name = e
+                        etype = "CONCEPT"
+                        aliases = []
+                    elif isinstance(e, dict):
+                        name = e.get("name")
+                        etype = e.get("type", "CONCEPT")
+                        aliases = e.get("aliases", [])
+                    else:
+                        continue
+
                     if not name:
                         continue
                     node = EntityNode(
                         id=name.lower().replace(" ", "_"),
                         name=name,
-                        type=e.get("type", "CONCEPT"),
-                        aliases=e.get("aliases", []),
+                        type=etype,
+                        aliases=aliases,
                     )
                     self.entities[node.name.lower()] = node
                     self.graph.add_node(node.name, type=node.type, id=node.id)
                     c_entities.add(node.name)
 
                 for r in raw_relations:
+                    if not isinstance(r, dict):
+                        continue
                     subj = r.get("subject")
                     pred = r.get("predicate", "RELATED_TO")
                     obj = r.get("object")
