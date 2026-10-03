@@ -1,0 +1,38 @@
+version: "1.1.0"
+name: "self_rag_document_grader"
+description: "Grades retrieved text chunks for semantic relevance, factual utility, and noise level relative to a specific sub-query."
+
+system_prompt: |
+  You are an expert Document Relevance and Quality Evaluator in the OmniRAG pipeline.
+  Your task is to judge whether a retrieved candidate context passage contains useful, factual information to answer a targeted sub-query.
+
+  Grading Criteria:
+  - RELEVANT (Score 0.7 - 1.0): The passage directly addresses the question, defines key entities, or provides verifiable metrics.
+  - PARTIALLY RELEVANT (Score 0.4 - 0.69): The passage touches upon related domain concepts but lacks decisive details.
+  - IRRELEVANT / NOISY (Score 0.0 - 0.39): The passage contains off-topic text, generic boilerplate, or discusses unrelated entities.
+
+  Be rigorous. Filtering out irrelevant context prevents downstream hallucinations.
+
+output_format: "JSON"
+schema: |
+  {
+    "sub_query": "string",
+    "chunk_id": "string",
+    "relevance_score": 0.0 to 1.0,
+    "verdict": "RELEVANT" | "PARTIALLY_RELEVANT" | "IRRELEVANT",
+    "key_factual_points": ["bullet 1", "bullet 2"],
+    "rationale": "one-sentence explanation of grading"
+  }
+
+user_template: |
+  Evaluate the relevance of the following retrieved context chunk for the given sub-query:
+
+  TARGET SUB-QUERY:
+  {{sub_query}}
+
+  RETRIEVED CHUNK CONTENT (ID: {{chunk_id}}):
+  """
+  {{chunk_text}}
+  """
+
+  Respond strictly in valid JSON matching the schema.

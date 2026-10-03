@@ -1,0 +1,29 @@
+[
+  {
+    "id": "eval_001",
+    "query": "How does the coherence time of neutral-atom quantum processors compare to superconducting qubits, and what are the specific bottlenecks limiting neutral-atom gate speeds?",
+    "category": "multi_hop_comparative",
+    "expected_hops": 2,
+    "target_entities": ["Neutral-Atom Quantum Processor", "Superconducting Qubit", "QuEra", "IBM Quantum", "optical tweezer"],
+    "ground_truth_reference": "Neutral-atom systems have coherence times (T2*) exceeding 12.4 seconds (up to 40s with Atom Computing), which is nearly five orders of magnitude longer than superconducting qubits (150-350 microseconds). However, neutral-atom gate speeds are constrained by atom rearrangement routines taking 50 to 200 microseconds per cycle.",
+    "gold_doc_ids": ["quantum_computing_2025"]
+  },
+  {
+    "id": "eval_002",
+    "query": "Which packaging technologies do TSMC and Intel use to bypass monolithic yield limits for AI accelerators, and what are their flagship sub-2nm nodes?",
+    "category": "cross_entity_synthesis",
+    "expected_hops": 2,
+    "target_entities": ["TSMC", "Intel Foundry", "N2", "Intel 18A", "CoWoS", "SoIC", "EMIB", "Foveros"],
+    "ground_truth_reference": "TSMC uses CoWoS and SoIC 3D packaging with its N2 GAA nanosheet node (using 0.33 NA EUV), while Intel uses EMIB and Foveros 3D packaging with its Intel 18A node featuring RibbonFET and PowerVia backside power delivery alongside High-NA EUV.",
+    "gold_doc_ids": ["semiconductor_foundries_supply_chain"]
+  },
+  {
+    "id": "eval_003",
+    "query": "Compare the energy density of QuantumScape's solid-state battery cells against conventional lithium-ion batteries and explain how long-duration energy storage addresses datacenter power demands.",
+    "category": "cross_document_multi_hop",
+    "expected_hops": 3,
+    "target_entities": ["QuantumScape", "415 Wh/kg", "260 to 285 Wh/kg", "Datacenter", "LDES", "Form Energy", "Vanadium Redox Flow"],
+    "ground_truth_reference": "QuantumScape solid-state cells reach 415 Wh/kg (and >1,000 Wh/L) versus conventional lithium-ion at 260-285 Wh/kg. Hyperscale AI datacenters drawing 120-180 MW baseload pair with Long-Duration Energy Storage like Form Energy's iron-air batteries (100-hour discharge) or VRFB to ensure continuous 24/7 power during renewable intermittency.",
+    "gold_doc_ids": ["nextgen_batteries_solid_state", "renewable_energy_grid_integration"]
+  }
+]

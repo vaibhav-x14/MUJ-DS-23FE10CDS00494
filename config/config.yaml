@@ -1,0 +1,85 @@
+# ==============================================================================
+# OmniRAG: Multi-Hop Agentic Retrieval-Augmented Generation Configuration
+# ==============================================================================
+
+system:
+  project_name: "OmniRAG"
+  version: "1.0.0"
+  environment: "production"
+  log_level: "INFO"
+  seed: 42
+
+llm:
+  provider: "gemini"               # Primary provider: "gemini" (supports mock fallback)
+  model_name: "gemini-2.0-flash"   # Options: gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash
+  embedding_model: "text-embedding-004"
+  temperature: 0.2
+  top_p: 0.95
+  max_output_tokens: 2048
+  request_timeout_seconds: 30
+  max_retries: 3
+  retry_backoff_factor: 1.5
+  fallback_to_mock: true           # Automatically switch to intelligent mock if API key absent
+
+retrieval:
+  chunking:
+    strategy: "recursive_semantic"
+    chunk_size: 400                # Target token count per chunk
+    chunk_overlap: 80              # Overlap between consecutive chunks
+    min_chunk_length: 50           # Ignore micro-fragments
+    separators: ["\n\n", "\n", ". ", "; ", " "]
+
+  sparse_bm25:
+    enabled: true
+    k1: 1.5                        # Term frequency saturation parameter
+    b: 0.75                        # Document length normalization parameter
+    lowercase: true
+    remove_stopwords: true
+
+  dense_vector:
+    enabled: true
+    metric: "cosine"               # "cosine" | "dot_product" | "euclidean"
+    dimension: 768
+
+  hybrid_fusion:
+    method: "reciprocal_rank_fusion" # RRF
+    rrf_k: 60                      # Smoothing constant for RRF
+    sparse_weight: 0.5             # Normalized hybrid balance
+    dense_weight: 0.5
+    top_k_candidates: 8            # Candidates retrieved per sub-query hop
+    final_top_k: 4                 # Final filtered chunks passed to synthesis
+
+knowledge_graph:
+  enabled: true
+  max_hop_depth: 2
+  entity_types:
+    - "ORGANIZATION"
+    - "TECHNOLOGY"
+    - "METRIC"
+    - "CONCEPT"
+    - "MATERIAL"
+    - "DATE"
+  min_cooccurrence_weight: 1
+
+agent:
+  planner:
+    max_hops: 3                    # Maximum number of sub-queries in DAG
+    allow_parallel_hops: true
+  
+  self_reflection:
+    enabled: true
+    relevance_threshold: 0.65       # Minimum relevance grade to retain candidate chunk
+    min_acceptable_sources: 2       # If relevant chunks < threshold, trigger query expansion
+    enable_query_rewriting: true    # Re-write query if first retrieval fails quality gate
+
+  synthesizer:
+    require_citations: true
+    citation_format: "[Doc:{doc_id}:Chunk:{chunk_id}]"
+    hallucination_audit: true
+    faithfulness_threshold: 0.75    # Flag answer if factual faithfulness score < 0.75
+
+web:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins: ["*"]
+  enable_ui: true

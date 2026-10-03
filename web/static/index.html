@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniRAG - Autonomous Multi-Hop Agentic RAG & Graph Reasoning</title>
+  <meta name="description" content="Production-grade Multi-Hop Agentic RAG System with Self-Reflection, Graph Augmentation, and Calibrated Hallucination Auditing powered by Google Gemini.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Background Glow & Matrix Canvas -->
+  <div class="glow-bg glow-purple"></div>
+  <div class="glow-bg glow-cyan"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-badge">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-title">OmniRAG</span>
+        <span class="brand-tag">MAANG Grade</span>
+      </div>
+      <span class="tagline">Multi-Hop Agentic Retrieval & Graph Hallucination Mitigation</span>
+    </div>
+
+    <div class="header-right">
+      <div id="status-pill" class="badge-pill online">
+        <span class="status-dot"></span>
+        <span id="engine-mode">Gemini Engine Ready</span>
+      </div>
+      <button id="view-prompts-btn" class="btn-ghost" title="Inspect Active Prompt Catalog">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Prompt Catalog
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Query Box Hero -->
+    <section class="hero-section">
+      <h1 class="hero-title">
+        Autonomous Multi-Hop Reasoning
+        <span class="gradient-text">& Grounded Fact Verification</span>
+      </h1>
+      <p class="hero-subtitle">
+        Deconstructs complex cross-document questions, retrieves via BM25 + Dense vector Reciprocal Rank Fusion, traverses knowledge graphs, and self-audits hallucinations.
+      </p>
+
+      <!-- Query Form -->
+      <form id="rag-query-form" class="query-box">
+        <div class="input-wrapper">
+          <textarea id="query-input" rows="2" placeholder="Ask a complex multi-hop question across technology, materials, and infrastructure..." required></textarea>
+          <button type="submit" id="submit-btn" class="btn-primary">
+            <span class="btn-text">Execute Multi-Hop Reasoning</span>
+            <span class="btn-icon">➔</span>
+          </button>
+        </div>
+
+        <!-- Preset Chips -->
+        <div class="presets-row">
+          <span class="presets-label">Benchmark Queries:</span>
+          <button type="button" class="preset-chip" data-query="How does the coherence time of neutral-atom quantum processors compare to superconducting qubits, and what are the specific bottlenecks limiting neutral-atom gate speeds?">
+            ⚛️ Quantum Coherence Tradeoff
+          </button>
+          <button type="button" class="preset-chip" data-query="Which packaging technologies do TSMC and Intel use to bypass monolithic yield limits for AI accelerators, and what are their flagship sub-2nm nodes?">
+            ⚡ TSMC vs Intel Packaging
+          </button>
+          <button type="button" class="preset-chip" data-query="Compare the energy density of QuantumScape's solid-state battery cells against conventional lithium-ion batteries and explain how long-duration energy storage addresses datacenter power demands.">
+            🔋 Solid-State Battery & Datacenters
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Pipeline Live Stepper -->
+    <section id="pipeline-stepper" class="stepper-section hidden">
+      <div class="stepper-title">Autonomous Execution Trace</div>
+      <div class="stepper-track">
+        <div class="step-node active" id="step-1">
+          <div class="step-circle">1</div>
+          <div class="step-label">Query DAG Planning</div>
+        </div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step-node" id="step-2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Hybrid RRF Retrieval</div>
+        </div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step-node" id="step-3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Self-RAG Grading</div>
+        </div>
+        <div class="step-line" id="line-3"></div>
+        <div class="step-node" id="step-4">
+          <div class="step-circle">4</div>
+          <div class="step-label">Knowledge Graph</div>
+        </div>
+        <div class="step-line" id="line-4"></div>
+        <div class="step-node" id="step-5">
+          <div class="step-circle">5</div>
+          <div class="step-label">Grounded Audit</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="results-section hidden">
+      <!-- Telemetry Strip -->
+      <div class="telemetry-bar">
+        <div class="telemetry-item">
+          <span class="telemetry-label">Execution Latency</span>
+          <span id="telemetry-latency" class="telemetry-val">0.024s</span>
+        </div>
+        <div class="telemetry-divider"></div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Faithfulness Score</span>
+          <span id="telemetry-faithfulness" class="telemetry-val badge-green">100.0%</span>
+        </div>
+        <div class="telemetry-divider"></div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Hallucination Risk</span>
+          <span id="telemetry-risk" class="telemetry-val badge-low">LOW</span>
+        </div>
+        <div class="telemetry-divider"></div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Total Tokens</span>
+          <span id="telemetry-tokens" class="telemetry-val">1,842</span>
+        </div>
+        <div class="telemetry-divider"></div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Model Engine</span>
+          <span id="telemetry-model" class="telemetry-val">gemini-2.0-flash</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-answer">Grounded Answer & Citations</button>
+        <button class="tab-btn" data-tab="tab-plan">Multi-Hop Query DAG</button>
+        <button class="tab-btn" data-tab="tab-evidence">Retrieved Evidence & Scores</button>
+        <button class="tab-btn" data-tab="tab-graph">Knowledge Graph Visualizer</button>
+        <button class="tab-btn" data-tab="tab-audit">Hallucination Audit Report</button>
+      </div>
+
+      <!-- Tab Contents -->
+      <div class="tab-content-panel">
+        <!-- Tab 1: Answer -->
+        <div id="tab-answer" class="tab-pane active">
+          <div class="card glass-card">
+            <div class="card-header">
+              <span class="card-title">Synthesized Authoritative Response</span>
+              <span class="card-badge">Strict Citation Grounded</span>
+            </div>
+            <div id="synthesized-answer-body" class="markdown-body">
+              <!-- Rendered Answer -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Query Plan -->
+        <div id="tab-plan" class="tab-pane">
+          <div class="card glass-card">
+            <div class="card-header">
+              <span class="card-title">Directed Acyclic Graph (DAG) Sub-Query Plan</span>
+              <span id="plan-hops-count" class="card-badge">3 Hops</span>
+            </div>
+            <div id="plan-reasoning" class="plan-strategy-box"></div>
+            <div id="dag-container" class="dag-tree"></div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Evidence Matrix -->
+        <div id="tab-evidence" class="tab-pane">
+          <div class="card glass-card">
+            <div class="card-header">
+              <span class="card-title">Hybrid Retrieval (BM25 + Dense + RRF) & Self-RAG Verdicts</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="evidence-table">
+                <thead>
+                  <tr>
+                    <th>Chunk ID</th>
+                    <th>Document</th>
+                    <th>BM25 Score</th>
+                    <th>Dense Score</th>
+                    <th>RRF Score</th>
+                    <th>Self-RAG Verdict</th>
+                    <th>Passage Snippet</th>
+                  </tr>
+                </thead>
+                <tbody id="evidence-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Knowledge Graph -->
+        <div id="tab-graph" class="tab-pane">
+          <div class="card glass-card">
+            <div class="card-header">
+              <span class="card-title">Entity-Relationship Knowledge Graph Traversal</span>
+              <span id="graph-stats-badge" class="card-badge">Entities & Triples</span>
+            </div>
+            <div id="graph-container" class="graph-svg-wrapper">
+              <svg id="kg-canvas" width="100%" height="450"></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Hallucination Audit -->
+        <div id="tab-audit" class="tab-pane">
+          <div class="card glass-card">
+            <div class="card-header">
+              <span class="card-title">Fact-Checking & Hallucination Audit Trace</span>
+              <span id="audit-score-badge" class="card-badge">Faithfulness: 100%</span>
+            </div>
+            <div id="audit-summary-text" class="audit-summary-banner"></div>
+            <div class="table-responsive">
+              <table class="data-table" id="audit-table">
+                <thead>
+                  <tr>
+                    <th>Extracted Factual Assertion</th>
+                    <th>Entailment Status</th>
+                    <th>Attributed Citation</th>
+                    <th>Grounded Source Evidence</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Prompt Modal -->
+  <div id="prompt-modal" class="modal-backdrop hidden">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Production Versioned Prompt Catalog</h3>
+        <button id="close-modal-btn" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="prompt-modal-body">
+        <p>Loading prompt templates...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <span>OmniRAG System v1.0.0 &bull; NLP Enterprise Submission</span>
+      <span>Engineered for MAANG Production Scale &bull; Zero External Dependency Fallback</span>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

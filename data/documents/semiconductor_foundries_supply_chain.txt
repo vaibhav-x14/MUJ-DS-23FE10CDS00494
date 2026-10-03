@@ -1,0 +1,15 @@
+# Advanced Semiconductor Manufacturing & Lithography Roadmap (2025–2026)
+
+## 1. Sub-2nm Lithography Nodes
+The global leading-edge semiconductor roadmap is dominated by TSMC (Taiwan Semiconductor Manufacturing Company) and Intel Foundry Services as they transition to Gate-All-Around (GAA) nanosheet field-effect transistors.
+
+TSMC is entering high-volume manufacturing for its N2 (2-nanometer class) process node, featuring nanosheet architecture with an estimated 15% performance improvement at identical power, or a 30% power reduction at matched frequencies compared to N3E. TSMC N2 utilizes standard 0.33 Numerical Aperture (NA) Extreme Ultraviolet (EUV) lithography systems manufactured exclusively by ASML Holding NV.
+
+Intel Foundry has deployed its flagship Intel 18A (1.8-nanometer) process node, which introduces two radical innovations: RibbonFET (Intel's proprietary GAA nanosheet implementation) and PowerVia backside power delivery network. PowerVia decouples signal interconnects from power supply routing, reducing IR drop voltage loss by 30% and enabling over 90% standard cell utilization. Intel has also acquired the industry's first commercial High-NA EUV (0.55 NA) scanner from ASML, the Twinscan EXE:5000, installed at its Hillsboro, Oregon foundry.
+
+## 2. Advanced Packaging & Chiplet Interconnects
+Monolithic die yields at sub-2nm nodes have fallen below economic viability for massive processors exceeding 800 square millimeters. Foundries have universally embraced heterogeneous multi-die 2.5D and 3D packaging technologies.
+
+TSMC relies on CoWoS (Chip-on-Wafer-on-Substrate) and SoIC (System-on-Integrated-Chips) 3D hybrid bonding, delivering interconnect densities above 10,000 interconnects per square millimeter. TSMC CoWoS capacity expanded from 35,000 wafers per month in 2024 to 75,000 wafers per month in 2025 to satisfy demand for generative AI accelerators like Nvidia Blackwell Ultra and AMD Instinct MI350.
+
+Intel competes with its EMIB (Embedded Multi-die Interconnect Bridge) 2.5D planar technology and Foveros 3D direct die-to-die stacking with bump pitches under 9 micrometers.

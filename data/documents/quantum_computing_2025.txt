@@ -1,0 +1,18 @@
+# Quantum Computing Hardware Architecture Benchmarks (2025 Review)
+
+## 1. Neutral-Atom Quantum Processors
+Neutral-atom quantum architectures have emerged as the fastest-scaling qubit modality in 2024–2025, driven by breakthroughs in dynamic optical tweezer arrays and Rydberg state excitations. Leading industry pioneers QuEra Computing and Atom Computing have demonstrated systems scaling beyond 1,180 neutral-atom qubits using Rubidium-87 and Ytterbium-171 isotopes.
+
+A pivotal advantage of neutral-atom systems is their exceptionally long theoretical coherence time. Because neutral atoms are isolated in vacuum optical traps with no mechanical tethering, single-qubit coherence times (T2*) consistently exceed 12.4 seconds, with Atom Computing reporting nuclear-spin coherence times reaching 40 seconds in laboratory conditions. Two-qubit gate fidelities for neutral atoms reached 99.5% in late 2024 using fast ultraviolet laser pulses.
+
+However, neutral-atom architectures face physical bottlenecks in shuttle rearrangement latency and laser beam steering speed. Atom rearrangement routines require between 50 to 200 microseconds per cycle, limiting raw gate clock speeds compared to solid-state circuit architectures.
+
+## 2. Superconducting Circuit Architectures
+Superconducting qubits, pioneered primarily by IBM Quantum (Heron and Condor processors) and Google Quantum AI (Sycamore and Willow processors), rely on Josephson junction transmon circuits cooled to 15 millikelvin inside dilution refrigerators.
+
+Superconducting processors operate at ultra-fast clock rates, with single-qubit gate times typically under 20 nanoseconds and two-qubit entangling gates operating in 40 to 60 nanoseconds. Google's 2024 Willow processor achieved a two-qubit gate fidelity of 99.85%, dropping error rates below the fault-tolerant surface code threshold.
+
+Nevertheless, superconducting qubits suffer from drastically shorter coherence times due to dielectric loss, two-level system (TLS) defects in substrate materials, and quasiparticle poisoning. State-of-the-art superconducting transmon coherence times (T1 and T2) remain bounded between 150 to 350 microseconds, nearly five orders of magnitude shorter than neutral-atom systems.
+
+## 3. Cryogenic & Thermal Integration
+Superconducting systems demand massive multi-stage helium dilution cryostats dissipating under 1 microwatt at base temperatures. In contrast, neutral-atom vacuum chambers operate largely at room temperature, requiring cryogenic cooling only for high-efficiency photon detectors.

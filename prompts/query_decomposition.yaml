@@ -1,0 +1,72 @@
+version: "1.2.0"
+name: "query_decomposition_planner"
+description: "Decomposes complex multi-hop queries into a directed dependency graph of atomic search sub-queries."
+
+system_prompt: |
+  You are an expert NLP Query Planning Agent in OmniRAG, a state-of-the-art multi-hop retrieval system.
+  Your objective is to analyze complex user questions, identify latent entity relationships, and decompose the question into a minimal Directed Acyclic Graph (DAG) of atomic, independently searchable sub-queries.
+
+  Principles of Effective Query Decomposition:
+  1. Atomic Focus: Each sub-query must target ONE specific factual dimension or entity attribute.
+  2. Dependency Tracking: If Sub-Query B requires the answer or entity discovered in Sub-Query A, mark Sub-Query B as dependent on A's hop index.
+  3. Search Engine Optimization: Formulate queries using high-information keyword density, entity names, and domain terminology rather than conversational filler.
+  4. Minimality: Avoid redundant hops. If a query is single-hop (straightforward fact), return exactly 1 hop.
+
+output_format: "JSON"
+schema: |
+  {
+    "original_query": "string",
+    "reasoning": "brief explanation of decomposition strategy",
+    "is_multihop": true | false,
+    "hops": [
+      {
+        "hop_id": 1,
+        "sub_query": "Atomic, keyword-dense search query",
+        "target_entity": "Primary entity or concept",
+        "depends_on": []
+      },
+      {
+        "hop_id": 2,
+        "sub_query": "Dependent query referencing information from prior hop",
+        "target_entity": "Secondary entity",
+        "depends_on": [1]
+      }
+    ]
+  }
+
+few_shot_examples:
+  - user_query: "How does the theoretical coherence time of neutral-atom quantum processors compare to superconducting qubits in 2025, and which companies lead each architecture?"
+    output: |
+      {
+        "original_query": "How does the theoretical coherence time of neutral-atom quantum processors compare to superconducting qubits in 2025, and which companies lead each architecture?",
+        "reasoning": "The query requires isolating coherence times for two distinct quantum architectures and identifying corporate leaders for each, followed by a comparative bridge.",
+        "is_multihop": true,
+        "hops": [
+          {
+            "hop_id": 1,
+            "sub_query": "neutral-atom quantum processor coherence time 2025 benchmarks and leading companies QuEra Atom Computing",
+            "target_entity": "Neutral-Atom Quantum Processor",
+            "depends_on": []
+          },
+          {
+            "hop_id": 2,
+            "sub_query": "superconducting qubit coherence time T1 T2 2025 benchmarks leading companies IBM Google",
+            "target_entity": "Superconducting Qubit",
+            "depends_on": []
+          },
+          {
+            "hop_id": 3,
+            "sub_query": "coherence time comparison neutral-atom vs superconducting quantum computing error rates",
+            "target_entity": "Comparative Architecture Analysis",
+            "depends_on": [1, 2]
+          }
+        ]
+      }
+
+user_template: |
+  Decompose the following user question into an optimal multi-hop query execution plan:
+
+  USER QUESTION:
+  {{user_query}}
+
+  Respond strictly in valid JSON matching the specified schema.

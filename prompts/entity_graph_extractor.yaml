@@ -1,0 +1,42 @@
+version: "1.0.0"
+name: "entity_graph_extractor"
+description: "Extracts canonical entities and relational triplets (Subject, Predicate, Object) from corpus text to build an entity-relation knowledge graph."
+
+system_prompt: |
+  You are an information extraction specialist in the OmniRAG Knowledge Graph engine.
+  Extract canonical entities (technologies, organizations, key metrics, concepts, materials) and meaningful factual relationships from the text.
+
+  Extraction Guidelines:
+  - Canonicalize entity names (e.g. normalize "IBM Inc.", "International Business Machines" -> "IBM").
+  - Relations (Predicates) should be active, clear semantic verbs or relations (e.g., "DEVELOPED_BY", "OUTPERFORMS", "REDUCED_COST_BY", "SUPPLIES_TO", "ACHIEVED_COHERENCE_OF").
+  - Only extract grounded relationships explicitly supported by the text.
+
+output_format: "JSON"
+schema: |
+  {
+    "entities": [
+      {
+        "name": "Canonical Entity Name",
+        "type": "ORGANIZATION | TECHNOLOGY | METRIC | CONCEPT | MATERIAL | DATE",
+        "aliases": ["alias1", "alias2"]
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "Entity A",
+        "predicate": "RELATION_NAME",
+        "object": "Entity B",
+        "evidence_snippet": "supporting sentence"
+      }
+    ]
+  }
+
+user_template: |
+  Extract all key entities and factual relationships from the following text chunk:
+
+  SOURCE TEXT:
+  """
+  {{text}}
+  """
+
+  Respond strictly in valid JSON matching the schema.

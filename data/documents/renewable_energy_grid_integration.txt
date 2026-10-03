@@ -1,0 +1,16 @@
+# Grid-Scale Energy Storage & AI Datacenter Power Infrastructure (2025–2026)
+
+## 1. Hyperscale Datacenter Energy Demands
+The rapid expansion of artificial intelligence clusters—exemplified by gigawatt-scale computing campuses operated by Microsoft, Google, Amazon Web Services, and Meta—has created acute electric grid interconnect bottlenecks. A premier AI datacenter housing 100,000 liquid-cooled Nvidia GPU accelerators draws between 120 to 180 Megawatts of continuous baseload electric power, rivaling the power consumption of a mid-sized metropolitan city.
+
+Because solar and wind generation are inherently intermittent, datacenter operators are pairing on-site renewable power with behind-the-meter utility-scale battery energy storage systems (BESS).
+
+## 2. Long-Duration Energy Storage (LDES) Architectures
+Lithium iron phosphate (LFP) chemistry currently dominates short-duration grid balancing (2 to 4-hour discharge windows), deployed by companies like Tesla Energy (Megapack 2XL) and Fluence Energy.
+
+However, resilient 24/7 carbon-free computing requires Long-Duration Energy Storage (LDES) providing continuous multi-day discharge (8 to 24+ hours). Key commercial LDES technologies include:
+- Vanadium Redox Flow Batteries (VRFB): Pioneered by Invinity Energy Systems and Sumitomo Electric, VRFB systems separate power rating (determined by the membrane cell stack) from energy capacity (determined by external electrolyte storage tanks), suffering zero capacity fade over 25,000 cycles.
+- Iron-Air Batteries: Commercialized by Form Energy, multi-day iron-air systems operate on reversible rusting of metallic iron, achieving capital costs below $20 per kilowatt-hour for 100-hour continuous discharge cycles.
+
+## 3. Synthetic Inertia and Grid Stability
+As synchronous rotating fossil generators retire, power grids lose physical rotational inertia. Advanced grid-forming battery inverters equipped with synthetic inertia software algorithms can inject sub-cycle frequency stabilization power within 15 milliseconds of a grid trip, mitigating catastrophic blackout cascades across high-voltage transmission lines.
