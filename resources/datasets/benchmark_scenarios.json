@@ -1,0 +1,20 @@
+[
+  {
+    "query": "How does the coherence time of neutral-atom quantum processors compare to superconducting qubits?",
+    "expected_hops": 2,
+    "ground_truth_doc_ids": ["doc_quantum_neutral", "doc_quantum_superconducting"],
+    "target_concepts": ["Neutral-Atom", "Superconducting Qubit", "T2 Coherence Time", "Rydberg States"]
+  },
+  {
+    "query": "What are the trade-offs between FlashAttention-3 GPU memory bandwidth and speculative decoding throughput?",
+    "expected_hops": 2,
+    "ground_truth_doc_ids": ["doc_flash_attn_3", "doc_speculative_decoding"],
+    "target_concepts": ["FlashAttention-3", "H100 Tensor Core", "Draft Model", "Speculative Decoding"]
+  },
+  {
+    "query": "Which consensus mechanism has lower Byzantine fault tolerance latency: HotStuff or Bullshark?",
+    "expected_hops": 2,
+    "ground_truth_doc_ids": ["doc_consensus_hotstuff", "doc_consensus_bullshark"],
+    "target_concepts": ["HotStuff", "Bullshark", "DAG Consensus", "Pipelined BFT"]
+  }
+]
