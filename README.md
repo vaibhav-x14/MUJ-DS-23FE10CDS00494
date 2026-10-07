@@ -18,7 +18,7 @@
 | Field | Detail |
 | :--- | :--- |
 | **Student Name** | Vaibhav Prajapat |
-| **Registration Number** | `23fe10cds00494` |
+| **Registration Number** | `23FE10CDS00494` |
 | **Repository Name** | `MUJ-DS-23fe10cds00494` |
 | **Branch** | B.Tech Computer Science & Engineering (Data Science) |
 | **Batch** | Batch F |
