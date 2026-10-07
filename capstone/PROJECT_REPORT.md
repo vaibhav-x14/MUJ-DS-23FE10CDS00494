@@ -3,8 +3,12 @@
 **Program:** Batch F - Capstone Project  
 **Project Title:** OmniRAG: Multi-Hop Agentic Retrieval-Augmented Generation & Graph Hallucination Mitigation System  
 **Student Name:** Vaibhav Prajapat  
+**Registration Number:** `23fe10cds00494`  
+**Branch:** B.Tech Computer Science & Engineering (Data Science)  
 **GitHub Username:** `vaibhav-x14`  
+**Repository:** `MUJ-DS-23fe10cds00494`  
 **Institution:** Manipal University Jaipur (MUJ)  
+
 
 ---
 

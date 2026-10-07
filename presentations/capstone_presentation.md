@@ -6,8 +6,10 @@
 ### Slide 1: Title Slide
 - **Project Title:** OmniRAG: Multi-Hop Agentic RAG with Self-Reflection & Graph Reasoning
 - **Student Name:** Vaibhav Prajapat
+- **Registration Number:** `23fe10cds00494`
+- **Repository:** `MUJ-DS-23fe10cds00494`
 - **Batch:** Batch F
-- **Branch:** Data Science / Computer Science & Engineering
+- **Branch:** B.Tech Computer Science & Engineering (Data Science)
 - **GitHub Username:** `vaibhav-x14`
 - **Institution:** Manipal University Jaipur (MUJ)
 

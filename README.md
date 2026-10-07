@@ -18,7 +18,8 @@
 | Field | Detail |
 | :--- | :--- |
 | **Student Name** | Vaibhav Prajapat |
-| **Registration Number** | `MUJ-DS-[REG_NO]` |
+| **Registration Number** | `23fe10cds00494` |
+| **Repository Name** | `MUJ-DS-23fe10cds00494` |
 | **Branch** | B.Tech Computer Science & Engineering (Data Science) |
 | **Batch** | Batch F |
 | **Project Title** | OmniRAG: Autonomous Multi-Hop Agentic RAG System |
