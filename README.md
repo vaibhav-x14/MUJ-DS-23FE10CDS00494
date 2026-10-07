@@ -6,12 +6,50 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Google Gemini API](https://img.shields.io/badge/LLM-Google%20Gemini%202.0%20%2F%201.5-8E75C4.svg?logo=google&logoColor=white)](https://aistudio.google.com/)
-[![Tests](https://img.shields.io/badge/tests-13%20passed%20(100%25)-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-14%20passed%20(100%25)-brightgreen.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
 
 ---
+
+### 🎓 Capstone Project Submission Metadata (Batch F)
+
+| Field | Detail |
+| :--- | :--- |
+| **Student Name** | Vaibhav Prajapat |
+| **Registration Number** | `MUJ-DS-[REG_NO]` |
+| **Branch** | B.Tech Computer Science & Engineering (Data Science) |
+| **Batch** | Batch F |
+| **Project Title** | OmniRAG: Autonomous Multi-Hop Agentic RAG System |
+| **GitHub Username** | [`@vaibhav-x14`](https://github.com/vaibhav-x14) |
+| **Training Program** | MUJ Data Science & NLP Capstone Training Program |
+
+---
+
+## 📂 Repository Organization (Step 4 Compliance)
+
+```
+.
+├── README.md               # Master documentation & setup guide (Step 5)
+├── assignments/            # Course assignments and lab exercises
+├── notebooks/              # Interactive walkthroughs and demo notebooks
+├── code/                   # Production scripts, pipeline runners, and web dashboard
+│   ├── run_pipeline.py     # End-to-end multi-hop pipeline CLI runner
+│   ├── benchmark.py        # Automated quantitative evaluation runner
+│   └── serve_ui.py         # FastAPI glassmorphism web dashboard
+├── omnirag/                # Core modular engine packages
+│   ├── agent/              # DAG planner, CRAG grader, citation synthesizer, auditor
+│   ├── retrieval/          # BM25Okapi, dense cosine, RRF fusion, graph retriever
+│   ├── storage/            # Persistent SQLite database layer
+│   └── llm/                # Gemini 3.5 Flash / 1.5 Pro client with fallback
+├── resources/              # SQLite DDL schema, benchmark QA datasets, architecture specs
+├── presentations/          # Capstone project presentation slide deck (8 slides)
+└── capstone/               # Capstone project final report & documentation
+```
+
+---
+
 
 ## 📌 Executive Summary
 
