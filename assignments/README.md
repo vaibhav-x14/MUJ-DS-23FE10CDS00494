@@ -1,6 +1,13 @@
-# Course Assignments & Lab Exercises
+### 🎓 Student Profile
+- **Student Name:** Vaibhav Prajapat
+- **Registration Number:** `23fe10cds00494`
+- **Batch:** Batch F
+- **Branch:** B.Tech Computer Science & Engineering (Data Science)
+- **GitHub Username:** `@vaibhav-x14`
 
-This folder contains all coursework, lab submissions, and weekly milestone assignments for **Batch F - Capstone Training Program**.
+---
+
+## 📌 Coursework & Lab Milestones
 
 | Assignment ID | Description | Status |
 | :--- | :--- | :--- |
@@ -10,3 +17,12 @@ This folder contains all coursework, lab submissions, and weekly milestone assig
 | Lab 04 | Multi-Hop Query Decomposition & Agentic Workflows | Completed |
 | Lab 05 | LLM API Integration & Hallucination Mitigation | Completed |
 | Capstone | OmniRAG: Production Multi-Hop Agentic RAG System | Final Submission |
+
+---
+
+## 🔀 Pull Request Workflow (Step 10 Compliance)
+
+| PR # | Branch | Target | Description | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| #1 | `feature/graph-rag-pipeline` | `main` | Light Graph-RAG neighborhood expansion & SQLite persistence | Merged |
+
